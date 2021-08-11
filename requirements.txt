@@ -1,0 +1,8 @@
+Pyrogram
+pymongo[srv]
+tgcrypto
+requests
+dnspython
+
+
+
