@@ -101,8 +101,6 @@ async def cler_chat(client, message):
     for chat in all:
         print(chat)
         await remove_channel_from_db(chat)
-    textq = "تم حذف جميع قنوات الاشتراك الاجباري  "
-    await message.reply(textq)
 
 
 owner_help = """
@@ -110,7 +108,6 @@ owner_help = """
 /broadcast اذاعة
 /sbs مشتركين البوت
 /set تعين اشتراك اجباري
-/cler حذف جميع قنوات الاشتراك الاجباري 
 /delset الغاء  تعين اشتراك اجباري
 """
 
@@ -119,6 +116,8 @@ owner_help = """
 async def start(client, message):
     userid=int( message.from_user.id)
     owner_id = Config.owner_id
+    update_channels = await channel_list()
+    channels = len(update_channels)
     add_status, total_users = await add_client_to_db(
         message.from_user.id
     )
@@ -133,5 +132,50 @@ async def start(client, message):
     if userid == owner_id:
         await message.reply(owner_help)
     else:
-        textq = "ارسل اسمك  لزغرفتة بالسومرية مثل \n `احمد : 𒅈𒍣` \n `زينب : 𒈨𒈠𒀭 ` "
-        await message.reply(textq)
+        if channels == 0:
+            textq = "ارسل اسمك  لزغرفتة بالسومرية مثل \n `احمد : 𒅈𒍣` \n `زينب : 𒈨𒈠𒀭 ` "
+            await message.reply(textq)
+        else:
+            for update_channel in update_channels:
+
+                print(update_channel)
+                try:
+
+                    user = await client.get_chat_member(int(update_channel), userid)
+                    print(user.status)
+
+                    if user.status in ["member", "creator", "administrator"]:
+
+                        textq = "ارسل اسمك  لزغرفتة بالسومرية مثل \n `احمد : 𒅈𒍣` \n `زينب : 𒈨𒈠𒀭 ` "
+                        await message.reply(textq)
+
+                    else:
+
+                        link = await client.get_chat(update_channel)
+                        link = link["invite_link"]
+                        print(link)
+
+                    # await update.reply_text(f"Join @{update_channel} To Use Me")
+                    await message.reply_text(
+                        f"🚸| عذرا عزيزي \n🔰| عليك الاشتراك بقناة البوت لتتمكن من استخدامه\n\n - {link} \n\n ‼️| اشترك ثم ارسل /start ",disable_web_page_preview=True)
+                except UserNotParticipant:
+                    link = await client.get_chat(update_channel)
+                    link = link["invite_link"]
+                    print(link)
+                    await message.reply_text(
+                        f"🚸| عذرا عزيزي \n🔰| عليك الاشتراك بقناة البوت لتتمكن من استخدامه\n\n - {link} \n\n ‼️| اشترك ثم ارسل /start ",disable_web_page_preview= True
+
+                    )
+                    return
+                    # await update.reply_text(f"Join @{update_channel} To Use Me")
+
+                except Exception:
+                    await message.reply_text("حدث خطا ما راسل الدعم  @shnider_bots ")
+                    return
+
+
+
+
+
+
+

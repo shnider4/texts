@@ -100,7 +100,7 @@ async def chack(client, message):
 
                         # await update.reply_text(f"Join @{update_channel} To Use Me")
                         await message.reply_text(
-                            f"🚸| عذرا عزيزي \n🔰| عليك الاشتراك بقناة البوت لتتمكن من استخدامه\n\n - {link} \n\n ‼️| اشترك ثم ارسل /start ")
+                            f"🚸| عذرا عزيزي \n🔰| عليك الاشتراك بقناة البوت لتتمكن من استخدامه\n\n - {link} \n\n ‼️| اشترك ثم ارسل /start ",disable_web_page_preview= True)
                     await check_user(client, message)
 
                 except UserNotParticipant:
@@ -111,7 +111,7 @@ async def chack(client, message):
 
                     # await update.reply_text(f"Join @{update_channel} To Use Me")
                     await message.reply_text(
-                        f"🚸| عذرا عزيزي \n🔰| عليك الاشتراك بقناة البوت لتتمكن من استخدامه\n\n - {link} \n\n ‼️| اشترك ثم ارسل /start "
+                        f"🚸| عذرا عزيزي \n🔰| عليك الاشتراك بقناة البوت لتتمكن من استخدامه\n\n - {link} \n\n ‼️| اشترك ثم ارسل /start ",disable_web_page_preview= True
 
                     )
 
