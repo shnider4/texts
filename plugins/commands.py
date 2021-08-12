@@ -101,6 +101,8 @@ async def cler_chat(client, message):
     for chat in all:
         print(chat)
         await remove_channel_from_db(chat)
+    textq = "تم حذف جميع قنوات الاشتراك الاجباري  "
+    await message.reply(textq)
 
 
 owner_help = """
@@ -108,6 +110,7 @@ owner_help = """
 /broadcast اذاعة
 /sbs مشتركين البوت
 /set تعين اشتراك اجباري
+/cler حذف جميع قنوات الاشتراك الاجباري 
 /delset الغاء  تعين اشتراك اجباري
 """
 
