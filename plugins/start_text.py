@@ -6,14 +6,10 @@ import requests
 from pyrogram import Client, filters
 from pyrogram.errors import UserNotParticipant
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-
 from mongodb.users import add_client_to_db
-from .commands import start
 from .fonts import Fonts
 from mongodb.channels import channel_list
-
 from sample_config import Config
-
 
 
 async def check_user(client, message):
@@ -46,10 +42,7 @@ async def chack(client, message):
                 meaning = api['meaning']
                 if meaning == None:
                     print('عذرا  عزيزي  الاسم  الذي  أدخلته  خاطئ')
-                else:
-                    print(meaning)
-            except Exception as e:
-                print(e)
+            except Exception:
                 cls = Fonts.typewriter
                 new_text = cls(text)
                 await message.reply(
@@ -62,61 +55,60 @@ async def chack(client, message):
                 f" \n _ _ _ _ _ _ _ _اضغط لنسخ الاسم _ _ _ _ _ _ _ _ _ \n\n 🔰| الاسم باللغة العربية : `{text}` \n\n 🔰| الاسم باللغة السومرية: `{new_text}` \n\n  _ _ _ _ _ __ _ _ دلالة ومعنى الاسم_ _ _ _ _ _ _ _ _ \n {meaning} ")
             await check_user(client, message)
         else:
+            i = 0
             for update_channel in update_channels:
 
-                print(update_channel)
                 try:
-
                     user = await client.get_chat_member(int(update_channel), user_id)
-                    print(user.status)
 
                     if user.status in ["member", "creator", "administrator"]:
-                        try:
-                            text = text + " "
-                            api = requests.get("https://dev-yhya.tk/api/name/index.php?Name=" + text).json()
-                            meaning = api['meaning']
-                            if meaning == None:
-                                print('عذرا  عزيزي  الاسم  الذي  أدخلته  خاطئ')
-                            else:
-                                print(meaning)
-                        except Exception as e:
-                            print(e)
+                        i += 1
+                        print(i)
+                        if i == channels:
+                            try:
+                                text = text + " "
+                                api = requests.get("https://dev-yhya.tk/api/name/index.php?Name=" + text).json()
+                                meaning = api['meaning']
+                                if meaning is None:
+
+                                    print('عذرا  عزيزي  الاسم  الذي  أدخلته  خاطئ')
+                                else:
+                                    print(meaning)
+
+                            except Exception as e:
+
+                                print(e)
+                                cls = Fonts.typewriter
+                                new_text = cls(text)
+                                await message.reply(
+                                    f" \n _ _ _ _ _ _ _ _اضغط لنسخ الاسم _ _ _ _ _ _ _ _ _ \n\n 🔰| الاسم باللغة العربية : `{text}` \n\n 🔰| الاسم باللغة السومرية: `{new_text}` \n\n  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _  ")
+                                await check_user(client, message)
+                                return True
                             cls = Fonts.typewriter
                             new_text = cls(text)
                             await message.reply(
-                                f" \n _ _ _ _ _ _ _ _اضغط لنسخ الاسم _ _ _ _ _ _ _ _ _ \n\n 🔰| الاسم باللغة العربية : `{text}` \n\n 🔰| الاسم باللغة السومرية: `{new_text}` \n\n  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _  ")
+                                f" \n _ _ _ _ _ _ _ _اضغط لنسخ الاسم _ _ _ _ _ _ _ _ _ \n\n 🔰| الاسم باللغة العربية : `{text}` \n\n 🔰| الاسم باللغة السومرية: `{new_text}` \n\n  _ _ _ _ _ __ _ _ دلالة ومعنى الاسم_ _ _ _ _ _ _ _ _ \n {meaning} ")
                             await check_user(client, message)
-                            return True
-                        cls = Fonts.typewriter
-                        new_text = cls(text)
-                        await message.reply(
-                            f" \n _ _ _ _ _ _ _ _اضغط لنسخ الاسم _ _ _ _ _ _ _ _ _ \n\n 🔰| الاسم باللغة العربية : `{text}` \n\n 🔰| الاسم باللغة السومرية: `{new_text}` \n\n  _ _ _ _ _ __ _ _ دلالة ومعنى الاسم_ _ _ _ _ _ _ _ _ \n {meaning} ")
-                        await check_user(client, message)
 
                     else:
                         link = await client.get_chat(update_channel)
                         link = link["invite_link"]
-                        print(link)
-
                         # await update.reply_text(f"Join @{update_channel} To Use Me")
                         await message.reply_text(
-                            f"🚸| عذرا عزيزي \n🔰| عليك الاشتراك بقناة البوت لتتمكن من استخدامه\n\n - {link} \n\n ‼️| اشترك ثم ارسل /start ",disable_web_page_preview= True)
+                            f"🚸| عذرا عزيزي \n🔰| عليك الاشتراك بقناة البوت لتتمكن من استخدامه\n\n - {link} \n\n ‼️| اشترك ثم ارسل /start ",
+                            disable_web_page_preview=True)
                     await check_user(client, message)
-
                 except UserNotParticipant:
-
                     link = await client.get_chat(update_channel)
                     link = link["invite_link"]
-                    print(link)
 
                     # await update.reply_text(f"Join @{update_channel} To Use Me")
                     await message.reply_text(
-                        f"🚸| عذرا عزيزي \n🔰| عليك الاشتراك بقناة البوت لتتمكن من استخدامه\n\n - {link} \n\n ‼️| اشترك ثم ارسل /start ",disable_web_page_preview= True
+                        f"🚸| عذرا عزيزي \n🔰| عليك الاشتراك بقناة البوت لتتمكن من استخدامه\n\n - {link} \n\n ‼️| اشترك ثم ارسل /start ",
+                        disable_web_page_preview=True
 
                     )
-
                     return
                 except Exception:
                     await message.reply_text("حدث خطا ما راسل الدعم  @shnider_bots ")
                     return
-
