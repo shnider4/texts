@@ -1,10 +1,14 @@
+
+# المطور ,,,,, t.me/shnider_bots
+
+
 from pyrogram import Client, filters
 from pyrogram.errors import UserNotParticipant
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 from pyrogram.raw.types import UpdateNewMessage
 
 from mongodb.channels import add_channel_to_db, remove_channel_from_db, channel_list
-from mongodb.users import user_list
+from mongodb.users import user_list, remove_client_from_db
 from mongodb.users import add_client_to_db
 
 from sample_config import Config
@@ -53,11 +57,14 @@ async def broadcast(client, message):
             success += 1
         except:
             failed += 1
-            # remove_chat_from_db(str(chat))
+            await remove_client_from_db(str(chat))
             pass
+    print(failed)
     await message.reply(
-        f"Message sent to {success} chat(s). {failed} chat(s) failed recieve message"
+        f" تم إرسال الرسالة إلى {success}  من الاشخاص.\n\n  {failed}  من الاشخاص فشل في تلقي الرسالة "
     )
+    if failed > 0:
+        await message.reply(f"تم حذف المحظورين {failed} من قاعدة البيانات  ")
 
 
 @Client.on_message(filters.private & filters.command('set') & filters.user(Config.owner_id))
@@ -72,7 +79,7 @@ async def set_chat(client, message):
     channels = len(channels)
 
     await message.reply(
-        f" تم اضافة القناة في الاشتراك الاجباري \n\n اسم القناة : {title} \nمعرف القناة : {username} \n عدد قنوات الاشتراك الاجباري الحالية {channels}\n")
+        f"👨🏼‍💻| تم اضافة القناة في الاشتراك الاجباري \n\n🔐 اسم القناة : {title} \n🆔 معرف القناة : @{username} \n🌐عدد قنوات الاشتراك الاجباري الحالية  {channels}\n")
 
 
 @Client.on_message(filters.private & filters.command("delset") & filters.user(Config.owner_id))
@@ -105,17 +112,23 @@ owner_help = """
 """
 
 
-@Client.on_message(filters.private & filters.command("start") & filters.user(Config.owner_id))
+@Client.on_message(filters.private & filters.command("start"))
 async def start(client, message):
+    userid=int( message.from_user.id)
+    owner_id = Config.owner_id
     add_status, total_users = await add_client_to_db(
         message.from_user.id
     )
     if add_status == 1:
-        await Client.send_message(
+        await client.send_message(
             chat_id=Config.owner_id,
             text="🆕 مشترك جديد في البوت!\nTotal: {}\nName: {}\nUsername: @{}".format(
                 total_users, message.from_user.first_name, message.from_user.username
             ),
             disable_notification=True,
         )
-    await message.reply(owner_help)
+    if userid == owner_id:
+        await message.reply(owner_help)
+    else:
+        textq = "ارسل اسمك  لزغرفتة بالسومرية مثل \n `احمد : 𒅈𒍣` \n `زينب : 𒈨𒈠𒀭 ` "
+        await message.reply(textq)
