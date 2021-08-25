@@ -27,14 +27,6 @@
             "url": "https://github.com/o5r/heroku-buildpack-mongo"
         }
     ],
-    "addons": [
-        {
-            "plan": "heroku-postgresql",
-            "options": {
-                "version": "12"
-            }
-        }
-    ],
     "formation": {
         "worker": {
             "quantity": 1,
